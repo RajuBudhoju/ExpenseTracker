@@ -1,0 +1,182 @@
+/* This makes to remove default margin, for flexibility to make our page*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #4d4c4c;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+header h1 {
+    font-size: 2rem;
+}
+
+main {
+    background-color: rgb(255, 255, 255);
+    display: flex;
+}
+
+.transactionInputEdit {
+    width: 50%;
+    /* Use flexbox to make the child divs side by side */
+}
+
+
+/******************** Transation input********* */
+.transactionInput {
+    margin: 0;
+    padding: 3rem;
+    padding-top: 1.3rem;
+    padding-bottom: 1.5rem;
+    background-color: white;
+    border-radius: 3px;
+}
+
+.balance {
+    padding-bottom: 1.5rem;
+}
+
+.transaction-form {
+    padding-top: 0rem;
+    background-color: white;
+}
+
+.transaction-form h2 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.transaction-form label {
+    display: block;
+    margin-top: 1rem;
+}
+
+.transaction-form input[type="text"],
+.transaction-form input[type="number"] {
+    width: 60%;
+    padding: 0.5rem;
+    margin-top: 0.2rem;
+    border: 1px solid #686565;
+    border-radius: 4px;
+}
+
+button#addTransaction {
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+button#addTransaction:hover {
+    background-color: #555;
+}
+
+
+/**********************HISTORY***************************/
+.transactionHistory {
+    width: 50%;
+    /* background-color: #cbcbce; */
+}
+
+.transactionHistoryName {
+    margin: 0;
+    text-align: center;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    background-color: rgb(197, 184, 184);
+    border-radius: 3px;
+}
+
+.incomeExpense {
+    margin: 0;
+    padding: 0.3rem;
+    background-color: rgb(222, 212, 212);
+    border-radius: 3px;
+    display: flex;
+}
+
+.income {
+    width: 50%;
+}
+
+.expense {
+    width: 50%;
+}
+
+.transaction-history .list {
+    list-style: none;
+    padding: 0;
+}
+
+.transaction-history .list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ccc;
+    align-items: center;
+}
+
+.transaction-history .list li.expense {
+    color: #d9534f;
+}
+
+.transaction-history .list li.income {
+    color: #5bc0de;
+}
+
+
+
+/*******************EDIT************** transation */
+.transactionEdit {
+    max-width: 700px;
+    margin: 0;
+    background-color: #dcdcde;
+    padding: 1rem;
+    padding-top: 0.9rem;
+    border-radius: 3px;
+}
+
+.transactionEdit input[type="text"] {
+    width: auto;
+    padding: 0.3rem;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
+    border: 1px solid #686565;
+    border-radius: 4px;
+}
+
+.transactionEdit input[type="number"] {
+    width: auto;
+    padding: 0.3rem;
+    margin-top: 0.5rem;
+    margin-left: 5.5rem;
+    border: 1px solid #686565;
+    border-radius: 4px;
+}
+
+
+
+button#updateTransaction {
+    background-color: #3f3f3f;
+    color: white;
+    font-weight: 100;
+    font-size: 90%;
+    border: none;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    margin-left: 70px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button#updateTransaction:hover {
+    background-color: #555;
+}

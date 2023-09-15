@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Balaji's Expense Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Expense Tracker</h1>
+    </header>
+    <main>
+        <div class="transactionInputEdit">
+            <!--           INPUT           -->
+            <div class="transactionInput">
+                <div class="balance">
+                    <h3 id="balance">Balance Rs: 0.00</h3>
+                </div>
+                <div class="transaction-form">
+                    <h2>Add New Transaction</h2>
+
+                    <label for="text">Enter your fund purpose</label>
+                    <input type="text" id="text" placeholder="Enter text...">
+
+                    <label for="amount">Amount <br />(Note: For Expenditure use -Ve amount, For Income use +ve
+                        amount)</label>
+                    <input type="number" id="amount" placeholder="Enter amount..." />
+
+                    <button id="addTransaction">Add Transaction</button>
+                </div>
+            </div>
+            <!--            EDIT             -->
+            <div class="transactionEdit" id="editTransaction">
+                <h2>Edit Transaction</h2>
+                <label for="editText">Enter your fund purpose</label>
+                <input type="text" id="editText" placeholder="Edit text..." />
+
+                <label for="editAmount"> <br /> Edit Amount</label>
+                <input type="number" id="editAmount" placeholder="Edit amount..." />
+                <button id="updateTransaction">Update Transaction</button>
+            </div>
+        </div>
+
+        <!-- HISTORY -->
+
+        <div class="transactionHistory">
+
+            <div class="transactionHistoryName">
+                <h2>Transaction History</h2>
+            </div>
+
+            <div class="incomeExpense">
+                <div class="income">
+                    <h3>Income</h3>
+                    <ul id="incomeList" class="list"></ul>
+                </div>
+
+                <div class="expense">
+                    <h3>Expense</h3>
+                    <ul id="expenseList" class="list"></ul>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
