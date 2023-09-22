@@ -1,219 +1,228 @@
-// Get DOM elements
 const balance = document.getElementById('balance');
 const incomeList = document.getElementById('incomeList');
 const expenseList = document.getElementById('expenseList');
 const text = document.getElementById('text');
+const editText = document.getElementById('editText');
 const amount = document.getElementById('amount');
+const editAmount = document.getElementById('editAmount');
 const addTransactionBtn = document.getElementById('addTransaction');
+const updateTransactionBtn = document.getElementById('updateTransaction');
 
-// Get transactions from local storage or set to an empty array
-const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-// Function to update the local storage
-function updateLocalStorage() {
-    axios.post("https://crudcrud.com/api/73074bce4b574e8197c823d7d0ba70cf/appointmentData", transactions)
+let incomeArr = [];
+let expenseArr = [];
+
+// Fetch contact data when the page loads
+window.addEventListener('load', () => {
+    axios.get("https://crudcrud.com/api/05f575a992cc4b5fbbc5a2b25e9bb0db/data")
         .then((response) => {
-            console.log(response);
+            const responseData = response.data;
+
+            
+            responseData.forEach((item) => {
+                addTransactionToDOM(item);
+                if (item.amount >= 0) {
+                    incomeArr.push(item);
+                } else {
+                    expenseArr.push(item);
+                }
+            });
+
         })
         .catch((err) => {
             console.log(err);
         });
-}
+});
 
 
-// Function to add a transaction
+//Add trasaction to server
+addTransactionBtn.addEventListener('click', addTransaction);
 function addTransaction(e) {
     e.preventDefault();
 
     if (text.value.trim() === '' || amount.value.trim() === '') {
         alert('Please enter text and amount');
-    } else {
+    } 
+    else {
         const transaction = {
-            id: generateID(),
+            id: Math.floor(Math.random() * 100000000),
             text: text.value,
-            amount: +amount.value,
+            amount: amount.value
         };
-
-        transactions.push(transaction);
-
+        if (transaction.amount > -1){
+            incomeArr.push(transaction);
+        } else {
+            expenseArr.push(transaction);
+        }
         addTransactionToDOM(transaction);
-        updateValues();
-        updateLocalStorage();
+        axios.post("https://crudcrud.com/api/05f575a992cc4b5fbbc5a2b25e9bb0db/data", transaction)
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
 
-        text.value = '';
-        amount.value = '';
     }
 }
 
-// Function to generate a random ID
-function generateID() {
-    return Math.floor(Math.random() * 100000000);
-}
-
-
-
-
-// Function to add a transaction to the DOM
+//Add transation to client
 function addTransactionToDOM(transaction) {
-    const sign = transaction.amount < 0 ? '-' : '+';
-    const amountClass = transaction.amount < 0 ? 'expense' : 'income';
-    const buttonColorClass = transaction.amount < 0 ? 'red' : 'green';
 
-    const item = document.createElement('li');
-    item.setAttribute('data-id', transaction.id);
-    item.classList.add(amountClass);
+    const li = document.createElement('li');
+    li.setAttribute('id', transaction.id);
 
-    const transactionText = document.createElement('span');
-    transactionText.textContent = transaction.text;
-    transactionText.style.color = 'inherit';
+    li.innerHTML = `
+        <span>* ${transaction.text} - ${Math.abs(transaction.amount)}</span>
+        <button class="edit-button" data-id="${transaction.id}">Edit</button>
+        <button class="delete-button" data-id="${transaction.id}">Del</button>
+    `;
 
-    const transactionAmount = document.createElement('span');
-    transactionAmount.textContent = `${sign} Rs ${Math.abs(transaction.amount)}`;
+    //Edit button html
+    const editButton = li.querySelector('.edit-button');
+    editButton.addEventListener('click', handleEditButtonClick);
 
-    const deleteEditContainer = document.createElement('div');
-    deleteEditContainer.className = 'delete-edit-btn-container';
+    //Del button html
+    const deleteButton = li.querySelector('.delete-button');
+    deleteButton.addEventListener('click', handleDeleteButtonClick);
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'x';
-    deleteButton.className = `delete-btn ${buttonColorClass}`;
-    deleteButton.onclick = () => removeTransaction(transaction.id);
-
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.className = `edit-btn ${buttonColorClass}`;
-    editButton.onclick = () => editTransaction(transaction.id);
-
-    deleteEditContainer.appendChild(deleteButton);
-    deleteEditContainer.appendChild(editButton);
-
-    item.appendChild(transactionText);
-    item.appendChild(transactionAmount);
-    item.appendChild(deleteEditContainer);
-
-    if (transaction.amount < 0) {
-        expenseList.appendChild(item);
+    if(transaction.amount > -1) {
+        incomeList.appendChild(li);
     } else {
-        incomeList.appendChild(item);
+        expenseList.appendChild(li);
     }
+
+    text.value = '';
+    amount.value = '';
+    
 }
 
-// Function to edit a transaction
-function editTransaction(id) {
-    const transactionIndex = transactions.findIndex(transaction => transaction.id === id);
+let editItemId = null;
+//Edit button function
+function handleEditButtonClick(event) {
+    console.log("EDIT CLICKED");
+    const id = parseInt(event.target.getAttribute('data-id'));
+    const LiItem = incomeArr.find(ele => ele.id === id);
 
-    if (transactionIndex !== -1) {
-        const transaction = transactions[transactionIndex];
-        editText.value = transaction.text;
-        editAmount.value = Math.abs(transaction.amount);
-        editTransactionForm.style.display = 'block';
-        updateTransactionBtn.addEventListener('click', () => updateTransaction(id));
+    if (!LiItem) {
+        const LiItem = expenseArr.find(ele => ele.id == id);
     }
+
+    editText.value = LiItem.text;
+    editAmount.value = LiItem.amount;
+    editItemId = id; 
+    
 }
 
-// Function to update the balance, income, and expense
-function updateValues() {
-    const amounts = transactions.map(transaction => transaction.amount);
-    const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(2);
-    const incomeTotal = amounts
-        .filter(item => item > 0)
-        .reduce((acc, item) => (acc += item), 0)
-        .toFixed(2);
-    const expenseTotal = (
-        amounts
-            .filter(item => item < 0)
-            .reduce((acc, item) => (acc += item), 0) * -1
-    ).toFixed(2);
+//Delete button function
+function handleDeleteButtonClick(event) {
+    const deleteButton = event.target;
+    const liElement = deleteButton.parentNode;
+    const itemId = liElement.getAttribute("data-id");
 
-    balance.innerText = `Rs: ${total}`;
-    incomeList.innerText = ''; // Clear the income list
-    expenseList.innerText = ''; // Clear the expense list
-    transactions.forEach(addTransactionToDOM); // Re-add transactions to the correct lists
-}
+    const incomeItemIndex = incomeArr.findIndex(item => item.id === itemId);
+    const expenseItemIndex = expenseArr.findIndex(item => item.id === itemId);
 
-// Function to remove a transaction by ID
-function removeTransaction(id) {
-    const transactionIndex = transactions.findIndex(transaction => transaction.id === id);
-
-    if (transactionIndex !== -1) {
-        transactions.splice(transactionIndex, 1);
-        updateLocalStorage();
-        updateValues();
+    //removing from js arrays
+    if (incomeItemIndex !== -1) {
+        incomeArr.splice(incomeItemIndex, 1);
+    } else if (expenseItemIndex !== -1) {
+        expenseArr.splice(expenseItemIndex, 1);
     }
-}
 
-function init() {
-    axios.get("https://crudcrud.com/api/73074bce4b574e8197c823d7d0ba70cf/appintmentData")
+    // Remove the <li> element from the DOM
+    liElement.remove();
+
+    axios.delete(`https://crudcrud.com/api/05f575a992cc4b5fbbc5a2b25e9bb0db/data/${itemId}`)
         .then((response) => {
-            transactions.length = 0; // Clear the transactions array
-            transactions.push(...response.data); // Push data from the server into the array
-            transactions.forEach(addTransactionToDOM);
-            updateValues();
+        console.log(`Item with ID ${idToDelete} deleted successfully.`);
+        })
+        .catch((error) => {
+        console.error(`Error deleting item with ID ${idToDelete}:`, error);
+        });
+
+    // const query = incomeArr[incomeItemIndex];
+
+    // axios.get(`https://crudcrud.com/api/e60ada00f37b47e0a3394901ba7613f2/data/${JSON.stringify(query)}`)
+    // .then((response) => {
+    //     const result = response.data;
+    //     if (result.length > 0) {
+    //         const _id = result[0]._id;
+    //         console.log(`Found item with _id: ${_id}`);
+    //     } else {
+    //         console.log(`Item with id ${itemId} not found.`);
+    //     }
+    //     axios.delete(`https://crudcrud.com/api/e60ada00f37b47e0a3394901ba7613f2/data/${_id}`)
+    //         .then((response) => {
+    //             console.log(`Item with ID ${idToDelete} deleted successfully.`);
+    //         })
+    //         .catch((error) => {
+    //             console.error(`Error deleting item with ID ${idToDelete}:`, error);
+    //     });
+
+    // })
+    // .catch((error) => {
+    //     console.error('Error:', error);
+    // });
+
+}
+
+//update transation to server
+updateTransactionBtn.addEventListener('click', updateTransaction);
+function updateTransaction(e){
+    e.preventDefault();
+
+    if (editText.value.trim() === '' || editAmount.value.trim() === '') {
+        alert('Please enter text and amount');
+    } 
+    else {
+        let item = incomeArr.find(ele => ele.id === editItemId);
+        if(!item){
+            item = expenseArr.find(ele => ele.id === editItemId);
+        }
+        if (item) {
+            item.text = editText.value;
+            item.amount = editAmount.value;
+        }
+        console.log(item.id);
+        addUpdatedTransationToDOM(item);
+        axios.put("https://crudcrud.com/api/05f575a992cc4b5fbbc5a2b25e9bb0db/data/", item)
+        .then((response) => {
+            console.log(response);
         })
         .catch((err) => {
             console.log(err);
-        });
-}
-addTransactionBtn.addEventListener('click', addTransaction);
-
-
-
-
-// Variables for edit transaction
-const editTransactionForm = document.getElementById('editTransaction');
-const editText = document.getElementById('editText');
-const editAmount = document.getElementById('editAmount');
-const updateTransactionBtn = document.getElementById('updateTransaction');
-
-// Function to display the edit transaction form
-function showEditForm(id) {
-    const transaction = transactions.find(transaction => transaction.id === id);
-    if (transaction) {
-        editText.value = transaction.text;
-        editAmount.value = Math.abs(transaction.amount);
-        editTransactionForm.style.display = 'block';
-        updateTransactionBtn.addEventListener('click', () => updateTransaction(id));
+        })
     }
+
 }
 
-// Function to hide the edit transaction form
-function hideEditForm() {
-    editTransactionForm.style.display = 'none';
+//updated transation to client
+function addUpdatedTransationToDOM(item) {
+    let li;
+    if (item.amount > -1) {
+        li = document.getElementById(item.id);
+    } else {
+        li = document.getElementById(item.id);
+    }
+    
+
+    li.innerHTML = '';
+    li.innerHTML = `
+        <span> * ${item.text} - ${item.amount}</span>
+        <button class="edit-button" data-id="${item.id}">Edit</button>
+        <button class="delete-button" data-id="${item.id}">Del</button>
+    `;
+
+    //Edit button html
+    const editButton = li.querySelector('.edit-button');
+    editButton.addEventListener('click', handleEditButtonClick);
+
+    //Del button html
+    const deleteButton = li.querySelector('.delete-button');
+    deleteButton.addEventListener('click', handleDeleteButtonClick);
+
     editText.value = '';
     editAmount.value = '';
-    updateTransactionBtn.removeEventListener('click', updateTransaction);
+    editItemId = null;
 }
-
-// Function to update a transaction
-function updateTransaction(id) {
-    const transactionIndex = transactions.findIndex(transaction => transaction.id === id);
-
-    if (transactionIndex !== -1) {
-        const updatedText = editText.value.trim();
-        const updatedAmount = +editAmount.value;
-        if (updatedText !== '' && !isNaN(updatedAmount)) {
-            transactions[transactionIndex].text = updatedText;
-            transactions[transactionIndex].amount = -Math.abs(updatedAmount); // Ensure the amount is negative for expenses
-            updateLocalStorage();
-            hideEditForm();
-            updateValues();
-        }
-    }
-}
-
-// Event listener to show the edit form
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('edit-btn')) {
-        const id = parseInt(e.target.parentElement.getAttribute('data-id'));
-        showEditForm(id);
-    }
-});
-
-// Event listener to hide the edit form
-editTransactionForm.addEventListener('click', (e) => {
-    if (e.target.classList.contains('close-edit-form')) {
-        hideEditForm();
-    }
-});
-
-// Initialize the app
-init();

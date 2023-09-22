@@ -110,6 +110,12 @@ button#addTransaction:hover {
 .expense {
     width: 50%;
 }
+#incomeList {
+    list-style-type: none;
+}
+#expenseList {
+    list-style-type: none;
+}
 
 .transaction-history .list {
     list-style: none;
@@ -135,6 +141,33 @@ button#addTransaction:hover {
 
 
 /*******************EDIT************** transation */
+
+
+.edit-button{
+    position: absolute;
+    left: 72%;
+    width: 3%;
+    background-color: #3e3d3d;
+    color: white;
+    border: none;
+    padding: 0.1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    border-radius: 0.2rem;
+    
+}
+button.delete-button{
+    position: absolute;
+    left: 69%;
+    width: 2.5%;
+    background-color: #ce826b;
+    color: white;
+    border: none;
+    padding: 0.1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    border-radius: 0.2rem;
+}
 .transactionEdit {
     max-width: 700px;
     margin: 0;

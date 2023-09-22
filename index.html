@@ -15,7 +15,7 @@
             <!--           INPUT           -->
             <div class="transactionInput">
                 <div class="balance">
-                    <h3 id="balance">Balance Rs: 0.00</h3>
+                    <!-- <h3 id="balance">Balance Rs: 0.00</h3> -->
                 </div>
                 <div class="transaction-form">
                     <h2>Add New Transaction</h2>
@@ -51,19 +51,30 @@
             </div>
 
             <div class="incomeExpense">
+
                 <div class="income">
                     <h3>Income</h3>
-                    <ul id="incomeList" class="list"></ul>
+                    <ul id="incomeList" class="list">
+                        <!-- <li> Dynamically added by js </li> -->
+                    </ul>
                 </div>
 
                 <div class="expense">
                     <h3>Expense</h3>
-                    <ul id="expenseList" class="list"></ul>
+                    <ul id="expenseList" class="list">
+                        <!-- <li id="transaction.id">
+                            <span>* ${transaction.text} - ${Math.abs(transaction.amount)}</span>
+                            <button class="edit-button" data-id="${transaction.id}">Edit</button>
+                            <button class="delete-button" data-id="${transaction.id}">Del</button> 
+                        </li> -->
+                    </ul>
                 </div>
+                
             </div>
         </div>
     </main>
     <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"></script>
 
 </body>
 
